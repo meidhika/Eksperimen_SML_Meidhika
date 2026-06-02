@@ -1,0 +1,39 @@
+name: Automate Data Preprocessing
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "credit_scoring_raw.csv"
+      - "preprocessing/automate_*.py"
+
+jobs:
+  preprocess-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.12.7
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12.7"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas scikit-learn
+
+      - name: Run preprocessing automation script
+        # PENTING: Sesuaikan nama file .py di bawah ini dengan nama file Anda
+        run: python preprocessing/automate_Nama-siswa.py
+
+      - name: Commit and push processed data
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add preprocessing/credit_scoring_preprocessing/
+          git commit -m "Auto-generate preprocessed data via GitHub Actions" || echo "No changes to commit"
+          git push
